@@ -1,8 +1,5 @@
-const dbConnection = require('./mongoConnection');
+import * as dbConnection from './mongoConnection.js';
 
-
-/* This will allow you to have one reference to each collection per app */
-/* Feel free to copy and paste this this */
 const getCollectionFn = (collection) => {
   let _col = undefined;
 
@@ -16,9 +13,10 @@ const getCollectionFn = (collection) => {
   };
 };
 
-/* Now, you can list your collections here: */
-module.exports = {
-  sweets : getCollectionFn('Sweets'),
-  users : getCollectionFn('users')
+const sweetsCollection = getCollectionFn('Sweets');
+const usersCollection = getCollectionFn('users');
 
+export default {
+  sweets: sweetsCollection,
+  users: usersCollection
 };
