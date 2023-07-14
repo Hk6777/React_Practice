@@ -68,8 +68,27 @@ let exportedMethonds = {
     },
     async getall() {
 
+        const userCollection = await users();
+        const userListData = await userCollection.find({}).toArray()
+        if (userListData) throw 'Could not get all user'
+
+        const Userslist = Userslist.map(user => {user._id = user._id.toString();
+            return user;
+        });
+
+        return Userslist
+
+
     },
     async getId(userid) {
+
+        const userCollection = await users()
+        const user = await userCollection.findOne({_id: ObjectId(userid)})
+        if(user === null) throw 'No user with that id'
+
+        user._id = user._id.toString();
+        return user
+
 
     },
     async checkUserExist(username) {
