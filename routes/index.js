@@ -1,11 +1,11 @@
-const userApiData = require('./userApi');
+import allRoutes from "./userApi.js"
 
 const constructorMethod = (app) => {
-  app.use('/sweets', userApiData);
+  app.use('/sweets', allRoutes);
 
   app.use('*', (req, res) => {
     res.status(404).json({ error: 'Not found' });
   });
 };
 
-module.exports = constructorMethod;
+export default constructorMethod;

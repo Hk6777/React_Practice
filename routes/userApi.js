@@ -1,20 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const data = require('../data')
-const showData = data.user;
-const sweetsData = data.sweets;
-const validation = require('../data/validation');
+import { Router } from "express";
+const router = Router();
+import {userData} from '../data/index.js'
 
-
-router.post('/login', async (req, res) => {
+router.route("/login").post( async (req, res) => {
     try {
         const username = req.body.username
         const password = req.body.password
 
-        const userInfo = await showData.checkUser(username, password)
+        const userInfo = await userData.checkUser(username, password)
 
         if (userInfo.authenticated) {
-            const userThatPostedInfo = await showData.getUsername(username)
+            const userThatPostedInfo = await userData.getUsername(username)
             const loggedUserData = {
                 _id: userThatPostedInfo._id,
                 name: userThatPostedInfo.name,
@@ -33,13 +29,13 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/signup', async (req, res) => {
+router.route("/signup").post( async (req, res) => {
     try {
         const name = req.body['name']
         const username = req.body['username']
         const password = req.body['password']
 
-        const createUserData = await showData.createUser(name, username, password)
+        const createUserData = await userData.createUser(name, username, password)
         res.json(createUserData)
 
     } catch (e) {
@@ -50,7 +46,7 @@ router.post('/signup', async (req, res) => {
 
 });
 
-router.get('/logout', (req, res) => {
+router.route("/logout").get(async (req, res) => {
     try {
 
         if (req.session.user) {
@@ -69,3 +65,4 @@ router.get('/logout', (req, res) => {
     }
 })
 
+export default router;
