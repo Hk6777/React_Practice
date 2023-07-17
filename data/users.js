@@ -1,11 +1,13 @@
-import * as getCollectionFn from '../config/mongoCollection.js';
+// import * as getCollectionFn from '../config/mongoCollection.js';
 import * as validation from './validation.js';
 import bcrypt from 'bcrypt';
 
 import { ObjectId } from 'mongodb'
 const saltRounds = 16;
 
-const { sweets, users } = getCollectionFn;
+// const {users} = getCollectionFn;
+import { user } from "../config/mongoCollection.js";
+const userCollection = await user();
 
 
 export const createUser = async (name, username, password) => {
@@ -25,9 +27,9 @@ export const createUser = async (name, username, password) => {
         password: hash
     };
 
-    await this.checkUserExist(username);
+    await checkUserExist(username);
 
-    const inserInfo = await users.insertOne(newUserData);
+    const inserInfo = await userCollection.insertOne(newUserData);
     if (!inserInfo.acknowledged || !inserInfo.insertedId) {
         throw 'Could not add user';
     }
@@ -98,11 +100,11 @@ export const getId = async (userid) => {
 export const checkUserExist = async (username) => {
     const usernameLowerCase = username.toLowerCase();
 
-    const usersCollection = await users();
+    const usersCollection = await user();
 
     const userExists = await usersCollection.findOne({ username: usernameLowerCase });
-    if (!userExists) {
-        throw 'Either the username or password is invalid';
+    if (userExists) {
+        throw 'User already exists';
     }
 
     return userExists;
