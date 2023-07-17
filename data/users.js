@@ -27,7 +27,11 @@ export const createUser = async (name, username, password) => {
         password: hash
     };
 
-    await checkUserExist(username);
+    const userExist = await checkUserExist(username);
+
+    if (userExist) {
+        throw 'User already exists';
+    }
 
     const inserInfo = await userCollection.insertOne(newUserData);
     if (!inserInfo.acknowledged || !inserInfo.insertedId) {
@@ -42,20 +46,23 @@ export const createUser = async (name, username, password) => {
 export const checkUser = async (username, password) => {
     username = validation.checkString(username, 'Username');
 
-    const userExist = await this.checkUserExist(username);
+    const userExist = await checkUserExist(username);
 
-    const comparePass = await bcrypt.compare(password, userExist.password);
-    if (!comparePass) {
-        throw 'Password is wrong!!';
+    if (userExist) {
+        const comparePass = await bcrypt.compare(password, userExist.password);
+        if (!comparePass) {
+            throw 'Password is wrong!!';
+        }
+        return { authenticated: true };
+    } else {
+        throw "User not exist"
     }
-
-    return { authenticated: true };
 }
 
 export const getUsername = async (username) => {
     username = validation.checkString(username, 'Username');
 
-    const userCollection = await users();
+    const userCollection = await user();
     const userListData = await userCollection.find({}).toArray();
     const userNameLower = username.toLowerCase();
 
@@ -103,9 +110,7 @@ export const checkUserExist = async (username) => {
     const usersCollection = await user();
 
     const userExists = await usersCollection.findOne({ username: usernameLowerCase });
-    if (userExists) {
-        throw 'User already exists';
-    }
+
 
     return userExists;
 }
