@@ -23,7 +23,12 @@ export const remove = (contact) => {
 
 export const create = (body) => {
     fetch(`${api}/contacts`, {
-        methos: 'POST', header: { ...header, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        methos: 'POST',
+        header: {
+            ...header,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
     })
         .then(res => res.json())
 }
